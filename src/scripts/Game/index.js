@@ -1,4 +1,4 @@
-import { Application, Container } from 'pixi.js';
+import { Application, Container, Ticker } from 'pixi.js';
 import Snake from '../Snake';
 import Food from '../Food';
 import Grid from '../Grid';
@@ -16,6 +16,7 @@ export default class Game {
     this.container = new Container();
     this.snake = new Snake(this.container);
     this.food = new Food(this.container);
+    this.ticker = Ticker.shared;
     this.dir = DIRECTION.ArrowUp;
   }
 
@@ -28,23 +29,29 @@ export default class Game {
     this.snake.draw();
     this.food.spawn(this._isFoodOnSnakeBody());
 
-    // this._ticker();
+    this._initTicker();
     this._controller();
   }
 
-  _ticker() {
-    // this.app.ticker.deltaTime = 5;
-    // this.app.ticker.speed = 10;
-    this.app.ticker.add((delta) => {
-      this._autoRun(0.2);
+  _initTicker() {
+    this.ticker.maxFPS = 120;
+    let lastTick = Date.now();
+    this.ticker.add(() => {
+      const currentTime = Date.now();
+      if (currentTime - lastTick >= 125) {
+        this._autoRun();
+        lastTick = currentTime;
+      }
     });
+    // this.ticker.stop();
   }
 
-  // _autoRun(deltaTime) {
-  //   if (this.dir.length > 1) {
-  //     this.snake.move(this.dir);
-  //   }
-  // }
+  _autoRun() {
+    if (this.dir.length > 1) {
+      this.snake.move(this.dir);
+      this._canEat();
+    }
+  }
 
   _canEat() {
     const head = this.snake.getHead();
@@ -76,10 +83,9 @@ export default class Game {
         this._canEat();
       }
       // else if (key === 'a') {
-      //   this._ticker();
+      //   this.ticker.start();
       // } else if (key === 's') {
-      //   this.app.ticker.stop();
-      //   console.log(this.app.ticker);
+      //   this.ticker.stop();
       // }
     });
   }

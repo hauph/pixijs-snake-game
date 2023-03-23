@@ -51,16 +51,15 @@ export default class Snake {
       x: head.x,
       y: head.y,
     };
-    // console.log(prevPosition);
 
-    function moveHelper(body) {
-      for (let i = 1; i < body.length; i++) {
+    function moveHelper(ctx) {
+      for (let i = 1; i < ctx.body.length; i++) {
         const temp = {
-          x: body[i].x,
-          y: body[i].y,
+          x: ctx.body[i].x,
+          y: ctx.body[i].y,
         };
-        body[i].x = prevPosition.x;
-        body[i].y = prevPosition.y;
+        ctx.body[i].x = prevPosition.x;
+        ctx.body[i].y = prevPosition.y;
         prevPosition = temp;
       }
     }
@@ -70,28 +69,28 @@ export default class Snake {
         if (this.lastDir === DIRECTION.ArrowRight && this.body.length > 1)
           break;
         this.body[0].x -= UNIT;
-        moveHelper(this.body);
+        moveHelper(this);
         this.lastDir = direction;
         break;
       }
       case DIRECTION.ArrowRight: {
         if (this.lastDir === DIRECTION.ArrowLeft && this.body.length > 1) break;
         this.body[0].x += UNIT;
-        moveHelper(this.body);
+        moveHelper(this);
         this.lastDir = direction;
         break;
       }
       case DIRECTION.ArrowUp: {
         if (this.lastDir === DIRECTION.ArrowDown && this.body.length > 1) break;
         this.body[0].y -= UNIT;
-        moveHelper(this.body);
+        moveHelper(this);
         this.lastDir = direction;
         break;
       }
       default: {
         if (this.lastDir === DIRECTION.ArrowUp && this.body.length > 1) break;
         this.body[0].y += UNIT;
-        moveHelper(this.body);
+        moveHelper(this);
         this.lastDir = direction;
         break;
       }
