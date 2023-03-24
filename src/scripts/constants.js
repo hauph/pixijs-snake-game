@@ -12,13 +12,15 @@ export const DIRECTION = {
   ArrowLeft: 'ArrowLeft',
 };
 
+export const EDGE = {
+  top: -UNIT,
+  right: GAME_SIZE,
+  bottom: GAME_SIZE,
+  left: -UNIT,
+};
+
 const x = getRandomNumber(GAME_SIZE);
 const y = getRandomNumber(GAME_SIZE);
-export const DEFAULT_SNAKE = [new Coordinate(x, y)];
-
-export const EDGE = {
-  top: 0,
-  right: 780,
-  bottom: 780,
-  left: 0,
-};
+export const DEFAULT_SNAKE = [
+  new Coordinate(x, y === 0 ? getRandomNumber(GAME_SIZE) : y),
+];

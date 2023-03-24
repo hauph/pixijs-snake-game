@@ -14,7 +14,7 @@ export default class Game {
     });
     this.grid = new Grid(this.app);
     this.container = new Container();
-    this.snake = new Snake(this.container);
+    this.snake = new Snake(this.container, this.app.stop);
     this.food = new Food(this.container);
     this.ticker = Ticker.shared;
     this.dir = DIRECTION.ArrowUp;
@@ -38,7 +38,7 @@ export default class Game {
     let lastTick = Date.now();
     this.ticker.add(() => {
       const currentTime = Date.now();
-      if (currentTime - lastTick >= 125) {
+      if (currentTime - lastTick >= 250) {
         this._autoRun();
         lastTick = currentTime;
       }

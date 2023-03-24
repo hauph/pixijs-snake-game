@@ -2,10 +2,11 @@ import { UNIT, DEFAULT_SNAKE, DIRECTION, EDGE } from '../constants';
 import { drawHelper } from '../utils';
 
 export default class Snake {
-  constructor(container) {
+  constructor(container, stopGameMethod) {
     this.container = container;
     this.body = [];
     this.lastDir = DIRECTION.ArrowUp;
+    this.stop = stopGameMethod;
   }
 
   getHead() {
@@ -52,7 +53,7 @@ export default class Snake {
       y: head.y,
     };
 
-    function moveHelper(ctx) {
+    function shuffleBody(ctx) {
       for (let i = 1; i < ctx.body.length; i++) {
         const temp = {
           x: ctx.body[i].x,
@@ -64,37 +65,51 @@ export default class Snake {
       }
     }
 
+    function moveHelper(ctx) {
+      shuffleBody(ctx);
+      if (ctx.wrongMove()) ctx.stop();
+      ctx.lastDir = direction;
+    }
+
     switch (direction) {
       case DIRECTION.ArrowLeft: {
+        // Snake cannot move backwards
         if (this.lastDir === DIRECTION.ArrowRight && this.body.length > 1)
-          break;
+          this.stop();
+
         this.body[0].x -= UNIT;
         moveHelper(this);
-        this.lastDir = direction;
         break;
       }
       case DIRECTION.ArrowRight: {
-        if (this.lastDir === DIRECTION.ArrowLeft && this.body.length > 1) break;
+        // Snake cannot move backwards
+        if (this.lastDir === DIRECTION.ArrowLeft && this.body.length > 1)
+          this.stop();
+
         this.body[0].x += UNIT;
         moveHelper(this);
-        this.lastDir = direction;
         break;
       }
       case DIRECTION.ArrowUp: {
-        if (this.lastDir === DIRECTION.ArrowDown && this.body.length > 1) break;
+        // Snake cannot move backwards
+        if (this.lastDir === DIRECTION.ArrowDown && this.body.length > 1)
+          this.stop();
+
         this.body[0].y -= UNIT;
         moveHelper(this);
-        this.lastDir = direction;
         break;
       }
       default: {
-        if (this.lastDir === DIRECTION.ArrowUp && this.body.length > 1) break;
+        // Snake cannot move backwards
+        if (this.lastDir === DIRECTION.ArrowUp && this.body.length > 1)
+          this.stop();
+
         this.body[0].y += UNIT;
         moveHelper(this);
-        this.lastDir = direction;
         break;
       }
     }
+    return false;
   }
 
   eat() {
@@ -103,7 +118,7 @@ export default class Snake {
     this.body.push(newTail);
   }
 
-  isEdge() {
+  _hitEdge() {
     const head = this.getHead();
     return (
       head.x === EDGE.left ||
@@ -111,5 +126,16 @@ export default class Snake {
       head.y === EDGE.top ||
       head.y === EDGE.bottom
     );
+  }
+
+  _hitBody() {
+    const head = this.getHead();
+    return this.body.some(
+      (coor, index) => index > 0 && coor.x === head.x && coor.y === head.y,
+    );
+  }
+
+  wrongMove() {
+    return this._hitEdge() || this._hitBody();
   }
 }
