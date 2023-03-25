@@ -3,17 +3,11 @@ import { drawHelper } from '../utils';
 import GraphicInterface from '../GraphicInterface';
 
 export default class Snake extends GraphicInterface {
-  #stop;
-
   constructor(container) {
     super();
     this.container = container;
     this.body = [];
     this.lastDir = DIRECTION.ArrowUp;
-  }
-
-  setStop(cb) {
-    this.#stop = cb;
   }
 
   getHead() {
@@ -70,52 +64,51 @@ export default class Snake extends GraphicInterface {
 
     function moveHelper(ctx) {
       shuffleBody(ctx);
-      if (ctx.wrongMove()) ctx.#stop();
+      if (ctx.#wrongMove()) return true;
       ctx.lastDir = direction;
+      return false;
     }
 
     switch (direction) {
       case DIRECTION.ArrowLeft: {
         // Snake cannot move backwards
         if (this.lastDir === DIRECTION.ArrowRight && this.body.length > 1)
-          this.#stop();
+          return true;
 
         this.body[0].x -= UNIT;
-        moveHelper(this);
         break;
       }
       case DIRECTION.ArrowRight: {
         // Snake cannot move backwards
         if (this.lastDir === DIRECTION.ArrowLeft && this.body.length > 1)
-          this.#stop();
+          return true;
 
         this.body[0].x += UNIT;
-        moveHelper(this);
         break;
       }
       case DIRECTION.ArrowUp: {
         // Snake cannot move backwards
         if (this.lastDir === DIRECTION.ArrowDown && this.body.length > 1)
-          this.#stop();
+          return true;
 
         this.body[0].y -= UNIT;
-        moveHelper(this);
         break;
       }
       default: {
         // Snake cannot move backwards
         if (this.lastDir === DIRECTION.ArrowUp && this.body.length > 1)
-          this.#stop();
+          return true;
 
         this.body[0].y += UNIT;
-        moveHelper(this);
         break;
       }
     }
+
+    return moveHelper(this);
   }
 
   eat() {
-    const newTail = drawHelper(undefined, undefined, 0xf2dc23, 999);
+    const newTail = drawHelper(undefined, undefined, 0xf2dc23, 99);
     this.container.addChild(newTail);
     this.body.push(newTail);
   }
@@ -137,7 +130,7 @@ export default class Snake extends GraphicInterface {
     );
   }
 
-  wrongMove() {
+  #wrongMove() {
     return this.#hitEdge() || this.#hitBody();
   }
 }

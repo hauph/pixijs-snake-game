@@ -35,10 +35,7 @@ export default class Game {
     this.app.stage.addChild(this.container);
     this.food.draw(this.#isFoodOnSnakeBody());
     this.score.draw();
-
     this.snake.draw();
-    const stopGame = this.#stopGame.bind(this);
-    this.snake.setStop(stopGame);
 
     this.#initTicker();
     this.#controller();
@@ -66,8 +63,12 @@ export default class Game {
 
   #autoRun() {
     if (this.dir.length > 1) {
-      this.snake.move(this.dir);
-      this.#canEat();
+      const res = this.snake.move(this.dir);
+      if (res) {
+        this.#stopGame();
+      } else {
+        this.#canEat();
+      }
     }
   }
 
@@ -98,8 +99,12 @@ export default class Game {
       const { key } = e;
       if (DIRECTION[key]) {
         this.dir = DIRECTION[key];
-        this.snake.move(this.dir);
-        this.#canEat();
+        const res = this.snake.move(this.dir);
+        if (res) {
+          this.#stopGame();
+        } else {
+          this.#canEat();
+        }
       }
       // else if (key === 'a') {
       //   this.ticker.start();

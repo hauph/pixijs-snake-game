@@ -3,8 +3,6 @@ import GraphicInterface from '../GraphicInterface';
 import { GAME_SIZE } from '../constants';
 
 export default class Loss extends GraphicInterface {
-  textGraphic;
-
   constructor(container) {
     super();
     this.container = container;
