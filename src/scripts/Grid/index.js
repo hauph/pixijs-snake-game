@@ -1,8 +1,10 @@
 import { UNIT } from '../constants';
 import { drawHelper } from '../utils';
+import GraphicInterface from '../GraphicInterface';
 
-export default class Grid {
+export default class Grid extends GraphicInterface {
   constructor(app) {
+    super();
     this.app = app;
   }
 

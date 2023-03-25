@@ -1,32 +1,34 @@
 import { getRandomNumber, drawHelper } from '../utils';
 import { GAME_SIZE } from '../constants';
+import GraphicInterface from '../GraphicInterface';
 
-export default class Food {
+export default class Food extends GraphicInterface {
   foodGraphic;
 
   constructor(container) {
+    super();
     this.container = container;
   }
 
-  _draw(cb) {
-    const x = getRandomNumber(GAME_SIZE);
-    const y = getRandomNumber(GAME_SIZE);
+  draw(cb) {
+    const x = getRandomNumber(GAME_SIZE, true);
+    const y = getRandomNumber(GAME_SIZE, true);
     if (cb(x, y)) {
-      this._draw(cb);
+      this.draw(cb);
       return;
     }
     this.foodGraphic = drawHelper(x, y, 0x008000);
     this.container.addChild(this.foodGraphic);
   }
 
-  _remove() {
+  #remove() {
     this.container.removeChild(this.foodGraphic);
   }
 
   spawn(cb) {
     if (this.foodGraphic) {
-      this._remove();
+      this.#remove();
     }
-    this._draw(cb);
+    this.draw(cb);
   }
 }
