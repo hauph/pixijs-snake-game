@@ -49,6 +49,8 @@ module.exports = {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'import/no-cycle': 'off',
+    'no-lonely-if': 'off',
+    'lines-between-class-members': 'off',
   },
   settings: {
     'import/resolver': 'webpack',

@@ -4,9 +4,15 @@ import Food from '../Food';
 import Grid from '../Grid';
 import Score from '../Score';
 import Loss from '../Loss';
+import Start from '../Start';
+import HighScore from '../HighScore';
 import { DIRECTION, GAME_SIZE } from '../constants';
 
 export default class Game {
+  #startGame = false;
+  #gameOver = false;
+  #gameSpeed = 250;
+
   constructor() {
     this.app = new Application({
       width: GAME_SIZE,
@@ -23,6 +29,8 @@ export default class Game {
     this.food = new Food(this.container);
     this.score = new Score(this.container);
     this.loss = new Loss(this.container);
+    this.start = new Start(this.container);
+    this.highScore = new HighScore(this.container);
     this.ticker = Ticker.shared;
     this.dir = DIRECTION.ArrowUp;
   }
@@ -36,9 +44,13 @@ export default class Game {
     this.food.draw(this.#isFoodOnSnakeBody());
     this.score.draw();
     this.snake.draw();
+    this.highScore.draw();
 
-    this.#initTicker();
     this.#controller();
+
+    if (!this.#startGame) {
+      this.start.draw();
+    }
   }
 
   #stopGame() {
@@ -46,6 +58,9 @@ export default class Game {
     this.app.ticker.addOnce(() => {
       this.app.stop();
     });
+    this.#startGame = false;
+    this.#gameOver = true;
+    this.highScore.setScore(this.score.getScore());
   }
 
   #initTicker() {
@@ -53,12 +68,11 @@ export default class Game {
     let lastTick = Date.now();
     this.ticker.add(() => {
       const currentTime = Date.now();
-      if (currentTime - lastTick >= 250) {
+      if (currentTime - lastTick >= this.#gameSpeed) {
         this.#autoRun();
         lastTick = currentTime;
       }
     });
-    // this.ticker.stop();
   }
 
   #autoRun() {
@@ -78,7 +92,8 @@ export default class Game {
     if (head.x === foodGraphic.x && head.y === foodGraphic.y) {
       this.snake.eat();
       this.food.spawn(this.#isFoodOnSnakeBody());
-      this.score.updateScore();
+      this.score.setScore();
+      this.highScore.setScore(this.score.getScore());
     }
   }
 
@@ -97,20 +112,26 @@ export default class Game {
   #controller() {
     document.addEventListener('keydown', (e) => {
       const { key } = e;
-      if (DIRECTION[key]) {
-        this.dir = DIRECTION[key];
-        const res = this.snake.move(this.dir);
-        if (res) {
-          this.#stopGame();
-        } else {
-          this.#canEat();
+      if (this.#startGame) {
+        if (DIRECTION[key]) {
+          this.dir = DIRECTION[key];
+          const res = this.snake.move(this.dir);
+          if (res) {
+            this.#stopGame();
+          } else {
+            this.#canEat();
+          }
+        }
+      } else {
+        if (key === 's' && !this.#gameOver) {
+          this.#startGame = true;
+          this.start.remove();
+          this.#initTicker();
+        } else if (key === 'r' && this.#gameOver) {
+          console.log('restart');
+          window.location.reload();
         }
       }
-      // else if (key === 'a') {
-      //   this.ticker.start();
-      // } else if (key === 's') {
-      //   this.ticker.stop();
-      // }
     });
   }
 }
