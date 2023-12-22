@@ -1,8 +1,8 @@
 import { getRandomNumber, drawHelper } from '../utils';
 import { GAME_SIZE } from '../constants';
-import GraphicInterface from '../GraphicInterface';
+import AbstractGraphic from '../AbstractGraphic';
 
-export default class Food extends GraphicInterface {
+export default class Food extends AbstractGraphic {
   foodGraphic;
 
   constructor(container) {

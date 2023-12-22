@@ -1,5 +1,5 @@
 import { Text } from 'pixi.js';
-import GraphicInterface from '../GraphicInterface';
+import AbstractGraphic from '../AbstractGraphic';
 import { GAME_SIZE } from '../constants';
 
 const texts = [
@@ -15,10 +15,19 @@ const texts = [
   },
 ];
 
-export default class Loss extends GraphicInterface {
+export default class Loss extends AbstractGraphic {
+  static instance;
+
   constructor(container) {
     super();
+
+    if (Loss.instance) {
+      return Loss.instance;
+    }
+
     this.container = container;
+
+    Loss.instance = this;
   }
 
   draw() {

@@ -1,13 +1,22 @@
 import { Text } from 'pixi.js';
-import GraphicInterface from '../GraphicInterface';
+import AbstractGraphic from '../AbstractGraphic';
 import { GAME_SIZE } from '../constants';
 
-export default class Start extends GraphicInterface {
+export default class Start extends AbstractGraphic {
+  static instance;
+
   #textGraphic;
 
   constructor(container) {
     super();
+
+    if (Start.instance) {
+      return Start.instance;
+    }
+
     this.container = container;
+
+    Start.instance = this;
   }
 
   draw() {

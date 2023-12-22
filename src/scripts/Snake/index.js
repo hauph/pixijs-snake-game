@@ -1,13 +1,22 @@
 import { UNIT, DEFAULT_SNAKE, DIRECTION, EDGE } from '../constants';
 import { drawHelper } from '../utils';
-import GraphicInterface from '../GraphicInterface';
+import AbstractGraphic from '../AbstractGraphic';
 
-export default class Snake extends GraphicInterface {
+export default class Snake extends AbstractGraphic {
+  static instance;
+
   constructor(container) {
     super();
+
+    if (Snake.instance) {
+      return Snake.instance;
+    }
+
     this.container = container;
     this.body = [];
     this.lastDir = DIRECTION.ArrowUp;
+
+    Snake.instance = this;
   }
 
   getHead() {

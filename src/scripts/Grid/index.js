@@ -1,8 +1,8 @@
 import { UNIT, GAME_SIZE } from '../constants';
 import { drawHelper } from '../utils';
-import GraphicInterface from '../GraphicInterface';
+import AbstractGraphic from '../AbstractGraphic';
 
-export default class Grid extends GraphicInterface {
+export default class Grid extends AbstractGraphic {
   constructor(app) {
     super();
     this.app = app;

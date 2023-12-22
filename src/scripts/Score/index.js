@@ -1,14 +1,23 @@
 import { Text } from 'pixi.js';
-import GraphicInterface from '../GraphicInterface';
+import AbstractGraphic from '../AbstractGraphic';
 
-export default class Score extends GraphicInterface {
+export default class Score extends AbstractGraphic {
+  static instance;
+
   #textGraphic;
 
   constructor(container) {
     super();
+
+    if (Score.instance) {
+      return Score.instance;
+    }
+
     this.container = container;
     this.score = 0;
     this.text = `Score: ${this.score}`;
+
+    Score.instance = this;
   }
 
   draw() {

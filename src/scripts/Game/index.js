@@ -6,14 +6,21 @@ import Score from '../Score';
 import Loss from '../Loss';
 import Start from '../Start';
 import HighScore from '../HighScore';
-import { DIRECTION, GAME_SIZE } from '../constants';
+import { DIRECTION, GAME_SIZE, SPEED_UNIT } from '../constants';
 
 export default class Game {
+  static instance;
+
   #startGame = false;
   #gameOver = false;
+  #shouldUpdateGameSpeed = true;
   #gameSpeed = 250;
 
   constructor() {
+    if (Game.instance) {
+      return Game.instance;
+    }
+
     this.app = new Application({
       width: GAME_SIZE,
       height: GAME_SIZE,
@@ -33,6 +40,8 @@ export default class Game {
     this.highScore = new HighScore(this.container);
     this.ticker = Ticker.shared;
     this.dir = DIRECTION.ArrowUp;
+
+    Game.instance = this;
   }
 
   init() {
@@ -82,6 +91,7 @@ export default class Game {
         this.#stopGame();
       } else {
         this.#canEat();
+        this.#increaseSpeed();
       }
     }
   }
@@ -94,6 +104,25 @@ export default class Game {
       this.food.spawn(this.#isFoodOnSnakeBody());
       this.score.setScore();
       this.highScore.setScore(this.score.getScore());
+    }
+  }
+
+  #increaseSpeed() {
+    const score = this.score.getScore();
+    if (
+      score >= SPEED_UNIT &&
+      score % SPEED_UNIT === 0 &&
+      this.#shouldUpdateGameSpeed &&
+      this.#gameSpeed > 50
+    ) {
+      this.#gameSpeed -= 10;
+      this.#shouldUpdateGameSpeed = false;
+    } else if (
+      score >= SPEED_UNIT &&
+      score % SPEED_UNIT !== 0 &&
+      !this.#shouldUpdateGameSpeed
+    ) {
+      this.#shouldUpdateGameSpeed = true;
     }
   }
 

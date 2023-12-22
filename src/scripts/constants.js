@@ -5,6 +5,8 @@ export const GAME_SIZE = 800;
 
 export const UNIT = 40;
 
+export const SPEED_UNIT = 5;
+
 export const DIRECTION = {
   ArrowUp: 'ArrowUp',
   ArrowRight: 'ArrowRight',
@@ -21,6 +23,4 @@ export const EDGE = {
 
 const x = getRandomNumber(GAME_SIZE);
 const y = getRandomNumber(GAME_SIZE);
-export const DEFAULT_SNAKE = [
-  new Coordinate(x, y === 0 ? getRandomNumber(GAME_SIZE) : y),
-];
+export const DEFAULT_SNAKE = [new Coordinate(x, y <= 230 ? 400 : y)];
