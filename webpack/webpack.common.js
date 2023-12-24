@@ -38,26 +38,30 @@ const plugins = [
 ];
 
 // Create more HtmlWebpackPlugin instances
-const files = fs.readdirSync(path.resolve('.', 'src/pages'), 'utf8');
-files.forEach((file) => {
-  const fileContent = fs.readFileSync(
-    path.resolve('.', `src/pages/${file}`),
-    'utf8',
-  );
-  if (fileContent.length) {
-    const page = new HtmlWebpackPlugin({
-      template: `src/pages/${file}`,
-      inject: 'body',
-      filename: `pages/${file}`,
-      minify: {
-        minifyJS: true,
-        minifyCSS: true,
-        minifyURLs: true,
-      },
-    });
-    plugins.push(page);
-  }
-});
+const dirPath = path.resolve('.', 'src/pages');
+let files = [];
+if (fs.existsSync(dirPath)) {
+  files = fs.readdirSync(dirPath, 'utf8');
+  files.forEach((file) => {
+    const fileContent = fs.readFileSync(
+      path.resolve('.', `src/pages/${file}`),
+      'utf8',
+    );
+    if (fileContent.length) {
+      const page = new HtmlWebpackPlugin({
+        template: `src/pages/${file}`,
+        inject: 'body',
+        filename: `pages/${file}`,
+        minify: {
+          minifyJS: true,
+          minifyCSS: true,
+          minifyURLs: true,
+        },
+      });
+      plugins.push(page);
+    }
+  });
+}
 
 module.exports = {
   entry: './src/scripts/index.js',
