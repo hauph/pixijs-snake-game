@@ -14,7 +14,7 @@ export default class Snake extends AbstractGraphic {
 
     this.container = container;
     this.body = [];
-    this.lastDir = DIRECTION.ArrowUp;
+    this.lastDir = DIRECTION[0];
 
     Snake.instance = this;
   }
@@ -78,35 +78,33 @@ export default class Snake extends AbstractGraphic {
       return false;
     }
 
+    const [ArrowUp, ArrowRight, ArrowDown, ArrowLeft] = DIRECTION;
+
     switch (direction) {
-      case DIRECTION.ArrowLeft: {
+      case ArrowLeft: {
         // Snake cannot move backwards
-        if (this.lastDir === DIRECTION.ArrowRight && this.body.length > 1)
-          return true;
+        if (this.lastDir === ArrowRight && this.body.length > 1) return true;
 
         this.body[0].x -= UNIT;
         break;
       }
-      case DIRECTION.ArrowRight: {
+      case ArrowRight: {
         // Snake cannot move backwards
-        if (this.lastDir === DIRECTION.ArrowLeft && this.body.length > 1)
-          return true;
+        if (this.lastDir === ArrowLeft && this.body.length > 1) return true;
 
         this.body[0].x += UNIT;
         break;
       }
-      case DIRECTION.ArrowUp: {
+      case ArrowUp: {
         // Snake cannot move backwards
-        if (this.lastDir === DIRECTION.ArrowDown && this.body.length > 1)
-          return true;
+        if (this.lastDir === ArrowDown && this.body.length > 1) return true;
 
         this.body[0].y -= UNIT;
         break;
       }
       default: {
         // Snake cannot move backwards
-        if (this.lastDir === DIRECTION.ArrowUp && this.body.length > 1)
-          return true;
+        if (this.lastDir === ArrowUp && this.body.length > 1) return true;
 
         this.body[0].y += UNIT;
         break;
