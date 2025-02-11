@@ -6,12 +6,18 @@ import Score from '../Score';
 import Loss from '../Loss';
 import Start from '../Start';
 import HighScore from '../HighScore';
-import { DIRECTION, GAME_SIZE, SPEED_UNIT } from '../constants';
+import {
+  DIRECTION,
+  GAME_SIZE,
+  SPEED_UNIT,
+  DIRECTION_MAPPER,
+} from '../constants';
+import { gameRestart } from '../utils';
 
 export default class Game {
   static instance;
 
-  #startGame = false;
+  #isGameStarted = false;
   #gameOver = false;
   #shouldUpdateGameSpeed = true;
   #gameSpeed = 250;
@@ -39,7 +45,8 @@ export default class Game {
     this.start = new Start(this.container);
     this.highScore = new HighScore(this.container);
     this.ticker = Ticker.shared;
-    this.dir = DIRECTION.ArrowUp;
+    // Set random direction (up, down, left, right)
+    this.dir = DIRECTION[Math.floor(Math.random() * DIRECTION.length)];
 
     Game.instance = this;
   }
@@ -55,11 +62,21 @@ export default class Game {
     this.snake.draw();
     this.highScore.draw();
 
+    if (gameRestart.getIsRestart()) {
+      gameRestart.removeIsRestart();
+      this.#startGame();
+    }
     this.#controller();
 
-    if (!this.#startGame) {
+    if (!this.#isGameStarted) {
       this.start.draw();
     }
+  }
+
+  #startGame() {
+    this.#isGameStarted = true;
+    this.start.remove();
+    this.#initTicker();
   }
 
   #stopGame() {
@@ -67,7 +84,7 @@ export default class Game {
     this.app.ticker.addOnce(() => {
       this.app.stop();
     });
-    this.#startGame = false;
+    this.#isGameStarted = false;
     this.#gameOver = true;
     this.highScore.setScore(this.score.getScore());
   }
@@ -77,7 +94,7 @@ export default class Game {
     let lastTick = Date.now();
     this.ticker.add(() => {
       const currentTime = Date.now();
-      if (currentTime - lastTick >= this.#gameSpeed) {
+      if (currentTime - lastTick >= this.#gameSpeed && !this.#gameOver) {
         this.#autoRun();
         lastTick = currentTime;
       }
@@ -140,11 +157,15 @@ export default class Game {
 
   #controller() {
     document.addEventListener('keydown', (e) => {
-      const { key } = e;
-      if (this.#startGame) {
-        if (DIRECTION[key]) {
-          this.dir = DIRECTION[key];
-          const res = this.snake.move(this.dir);
+      const { key, metaKey, ctrlKey, altKey, shiftKey } = e;
+      const noModifier = !metaKey && !ctrlKey && !altKey && !shiftKey;
+
+      if (this.#isGameStarted) {
+        const directionIndex = DIRECTION_MAPPER[key];
+        const direction = DIRECTION[directionIndex];
+        if (direction) {
+          this.dir = direction;
+          const res = this.snake.move(direction);
           if (res) {
             this.#stopGame();
           } else {
@@ -153,11 +174,9 @@ export default class Game {
         }
       } else {
         if (key === 's' && !this.#gameOver) {
-          this.#startGame = true;
-          this.start.remove();
-          this.#initTicker();
-        } else if (key === 'r' && this.#gameOver) {
-          console.log('restart');
+          this.#startGame();
+        } else if (key === 'r' && this.#gameOver && noModifier) {
+          gameRestart.setIsRestart();
           window.location.reload();
         }
       }

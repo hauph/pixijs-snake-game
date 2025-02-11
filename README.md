@@ -2,6 +2,8 @@
 
 Simple boilerplate for developing static HTML projects using `Webpack`, `SCSS`. It is also configured with `nodemon`, `webpack-dev-server`, `eslint`, `prettier`, `stylelint` and `babel`.
 
+## [Demo for PixiJS Snake game](https://hauph.github.io/pixijs-snake-game/)
+
 ## Installation
 
 1. Clone source code.

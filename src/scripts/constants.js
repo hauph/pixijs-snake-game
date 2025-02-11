@@ -7,12 +7,14 @@ export const UNIT = 40;
 
 export const SPEED_UNIT = 5;
 
-export const DIRECTION = {
-  ArrowUp: 'ArrowUp',
-  ArrowRight: 'ArrowRight',
-  ArrowDown: 'ArrowDown',
-  ArrowLeft: 'ArrowLeft',
+export const DIRECTION_MAPPER = {
+  ArrowUp: 0,
+  ArrowRight: 1,
+  ArrowDown: 2,
+  ArrowLeft: 3,
 };
+
+export const DIRECTION = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'];
 
 export const EDGE = {
   top: -UNIT,
@@ -21,6 +23,8 @@ export const EDGE = {
   left: -UNIT,
 };
 
-const x = getRandomNumber(GAME_SIZE);
-const y = getRandomNumber(GAME_SIZE);
-export const DEFAULT_SNAKE = [new Coordinate(x, y <= 230 ? 400 : y)];
+const x = getRandomNumber(520);
+const y = getRandomNumber(520);
+export const DEFAULT_SNAKE = [
+  new Coordinate(x < 200 ? 200 : x, y < 200 ? 200 : y),
+];

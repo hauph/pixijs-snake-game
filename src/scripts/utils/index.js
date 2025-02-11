@@ -1,6 +1,7 @@
 import { Graphics } from 'pixi.js';
 import { UNIT } from '../constants';
 import HighScoreUtil from './HighScoreUtil';
+import GameRestartUtil from './GameRestartUtil';
 
 export const getRandomNumber = (size, isFreeNumber = false) => {
   let randonNumber = !isFreeNumber
@@ -26,3 +27,4 @@ export const drawHelper = (x, y, color, zIndex = 1, lineColor = 0x000000) => {
 };
 
 export const highScore = new HighScoreUtil();
+export const gameRestart = new GameRestartUtil();
